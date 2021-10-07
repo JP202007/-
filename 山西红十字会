@@ -13,7 +13,7 @@ maxPages=5000
 has_next=True
 index_page=1
 
-f = codecs.open("../jiangxi_donation_all1.csv", "w", 'utf-8')
+f = codecs.open("../shanxi_donation_all1.csv", "w", 'utf-8')
 while has_next and index_page<maxPages:
     print("processing page: " + str(index_page))
     page = requests.get("http://www.sxredcross.org.cn/index/donation/lovedetails/id/13.html?id=13&page="+str(index_page))
