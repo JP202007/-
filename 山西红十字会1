@@ -1,0 +1,42 @@
+# -*- coding: UTF-8 -*-
+
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import json
+import numpy as np
+import sys
+import codecs
+
+
+maxPages=5000
+has_next=True
+index_page=1
+
+f = codecs.open("../jiangxi_donation_all1.csv", "w", 'utf-8')
+while has_next and index_page<maxPages:
+    print("processing page: " + str(index_page))
+    page = requests.get("http://www.sxredcross.org.cn/index/donation/lovedetails/id/13.html?id=13&page="+str(index_page))
+    soup = BeautifulSoup(page.content, 'html.parser')
+    tds = list(soup.find_all('td'))
+    total_user_per_page = int(len(tds)/5)
+    data_per_page = []
+    for i in range(total_user_per_page):
+        user_name = tds[i*5+1].text
+        user_donation=tds[i*5+3].text[1:]
+        data_per_user = [user_name,user_donation]
+        data_per_page.append(data_per_user)
+    data_string_lines = []
+    for line in data_per_page:
+        data_string_line = [line[0], line[1]]
+        data_string_line_join = ",".join(data_string_line)
+        data_string_lines.append(data_string_line_join)
+    # write to a csv file
+    for index in range(len(data_string_lines)):
+        f.write(data_string_lines[index])
+        if index < len(data_string_lines) - 1 :
+            f.write(",")
+        f.write("\n")
+    index_page += 1
+
+f.close()
